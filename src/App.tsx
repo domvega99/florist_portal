@@ -1,17 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { Button } from './components/ui/button'
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import './App.css';
+import Dashboard from './pages/dashboard/Dashboard';
+import Login from "./pages/authentication/Login";
+import Forgot from "./pages/authentication/Forgot";
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      
-    </>
-  )
+    <Router>
+      <Routes>
+        {/* Public Route */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<Forgot />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/"
+          element={
+        
+            <Dashboard />
+     
+          }
+        />
+        
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
