@@ -5,6 +5,7 @@ import Login from "./pages/authentication/Login";
 import Forgot from "./pages/authentication/Forgot";
 import { MainLayout } from "./layouts/MainLayout";
 import FloristList from "./pages/florist/FloristList";
+import UserList from "./pages/user/UserList";
 
 
 
@@ -26,6 +27,12 @@ function App() {
             path="/florists"
             element={
               <FloristList />
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              <UserList />
             }
           />
         </Route>

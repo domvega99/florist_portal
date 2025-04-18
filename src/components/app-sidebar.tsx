@@ -11,7 +11,6 @@ import {
 } from "lucide-react"
 import type * as React from "react"
 import { Link } from "react-router-dom"
-import { NavDocuments } from "./nav-documents"
 import { NavSecondary } from "./nav-secondary"
 import { NavUser } from "./nav-user"
 import { NavMain } from "./nav.main"
@@ -59,8 +58,25 @@ const data = {
     ],
     managements: [
         {
-            name: "Users",
+            title: "Users",
+            url: "/users",
+            icon: User,
+        },
+        {
+            title: "Roles & Permissions",
             url: "#",
+            icon: Package,
+        },
+        {
+            title: "Reports",
+            url: "#",
+            icon: ClipboardListIcon,
+        },
+    ],
+    documents: [
+        {
+            name: "Users",
+            url: "/users",
             icon: User,
         },
         {
@@ -92,7 +108,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain} />
-                <NavDocuments items={data.managements} />
+                <NavMain items={data.managements} />
                 <NavSecondary items={data.navSecondary} className="mt-auto" />
             </SidebarContent>
             <SidebarFooter>
