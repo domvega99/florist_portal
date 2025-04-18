@@ -1,8 +1,8 @@
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Florist } from "@/shared/interfaces/florist.interface"
 import type { ColumnDef } from "@tanstack/react-table"
-import { Florist } from "./data"
 import { UserRowActions } from "./row-actions"
 
 export const floristColumn: ColumnDef<Florist>[] = [

@@ -1,15 +1,6 @@
-export type FloristFilter = {
-    id: string
-    title: string
-    options: FloristOption[]
-}
+import { Filter } from "@/shared/interfaces/filter.interface";
 
-type FloristOption = {
-    label: string
-    value: string
-}
-
-export const floristFilters: FloristFilter[] = [
+export const floristFilters: Filter[] = [
     {
         id: "city",
         title: "City",
