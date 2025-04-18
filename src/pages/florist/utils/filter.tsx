@@ -1,31 +1,34 @@
-export type UserFilter = {
+export type FloristFilter = {
     id: string
     title: string
-    options: UserOption[]
+    options: FloristOption[]
 }
 
-type UserOption = {
+type FloristOption = {
     label: string
     value: string
 }
 
-export const UserFilters: UserFilter[] = [
+export const floristFilters: FloristFilter[] = [
+    {
+        id: "city",
+        title: "City",
+        options: [],
+    },
+
+    {
+        id: "province",
+        title: "Province",
+        options: [],
+    },
     {
         id: "status",
         title: "Status",
-        options: [
-            { label: "Active", value: "active" },
-            { label: "Inactive", value: "inactive" },
-            { label: "Pending", value: "pending" },
-        ],
+        options: [],
     },
     {
-        id: "role",
-        title: "Role",
-        options: [
-            { label: "Admin", value: "Admin" },
-            { label: "Editor", value: "Editor" },
-            { label: "User", value: "User" },
-        ],
+        id: "florist_rep",
+        title: "Florist Rep",
+        options: [],
     },
 ]

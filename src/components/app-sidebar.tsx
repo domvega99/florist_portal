@@ -100,7 +100,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
                             <Link to="/">
-                                <span className="text-base font-semibold">🌸 Florist Management</span>
+                                <span className="text-base font-semibold">🌸 Florist Portal</span>
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

@@ -2,10 +2,10 @@ import { DataTableColumnHeader } from "@/components/table/data-table-column-head
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import type { ColumnDef } from "@tanstack/react-table"
+import { Florist } from "./data"
 import { UserRowActions } from "./row-actions"
-import { User } from "./data"
 
-export const UserColumns: ColumnDef<User>[] = [
+export const floristColumn: ColumnDef<Florist>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -26,21 +26,40 @@ export const UserColumns: ColumnDef<User>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "id",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
+        accessorKey: "floristcode",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Code" />,
         enableHiding: false,
     },
     {
-        accessorKey: "name",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+        accessorKey: "photo_url",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Image" />,
+        enableSorting: false,
     },
     {
-        accessorKey: "email",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+        accessorKey: "florist_name",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Florist" />,
     },
     {
-        accessorKey: "role",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
+        accessorKey: "contact_number",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Contact" />,
+    },
+    {
+        accessorKey: "city",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="City" />,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+    },
+    {
+        accessorKey: "province",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Province" />,
+        filterFn: (row, id, value) => {
+            return value.includes(row.getValue(id))
+        },
+    },
+    {
+        accessorKey: "florist_rep",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Florist Rep" />,
         filterFn: (row, id, value) => {
             return value.includes(row.getValue(id))
         },
@@ -62,15 +81,8 @@ export const UserColumns: ColumnDef<User>[] = [
         },
     },
     {
-        accessorKey: "lastActive",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Last Active" />,
-        cell: ({ row }) => {
-            const date = new Date(row.getValue("lastActive"))
-            return <div>{date.toLocaleDateString()}</div>
-        },
-    },
-    {
         id: "actions",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Actions" />,
         cell: ({ row }) => <UserRowActions row={row} />,
     },
 ]

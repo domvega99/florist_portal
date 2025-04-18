@@ -1,5 +1,20 @@
 import { Button } from "@/components/ui/button"
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import {
     Table,
     TableBody,
@@ -12,20 +27,25 @@ import {
     type ColumnDef,
     type ColumnFiltersState,
     FilterFn,
+    OnChangeFn,
     type SortingState,
     type VisibilityState,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { X } from "lucide-react"
+import {
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+    Settings2,
+    X,
+} from "lucide-react"
 import * as React from "react"
 import { DataTableFacetedFilter } from "../../components/table/data-table-faceted-filter"
-import { DataTableViewOptions } from "../../components/table/data-table-view-options"
-import { DataTablePagination } from "./data-table-pagination"
 
 export interface FacetedFilterOption {
     label: string
@@ -42,9 +62,17 @@ export interface FilterableColumn {
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    total: number
+    pageIndex: number
+    pageSize: number
+    onPageChange: (pageIndex: number) => void
+    onPageSizeChange: (pageSize: number) => void
     showCheckbox?: boolean
-    searchableColumn?: string
     filterableColumns?: FilterableColumn[]
+    sorting: SortingState
+    onSortingChange: OnChangeFn<SortingState>
+    searchValue: string  // Search value prop
+    onSearchChange: (searchValue: string) => void  // Function to handle search changes
 }
 
 const includesSome: FilterFn<unknown> = (row, columnId, filterValue: string[]) => {
@@ -55,63 +83,164 @@ const includesSome: FilterFn<unknown> = (row, columnId, filterValue: string[]) =
 export function DataTable<TData, TValue>({
     columns,
     data,
+    total,
+    pageIndex,
+    pageSize,
+    onPageChange,
+    onPageSizeChange,
     showCheckbox = true,
-    searchableColumn = "name",
     filterableColumns = [],
+    sorting,
+    onSortingChange,
+    searchValue,
+    onSearchChange,
 }: DataTableProps<TData, TValue>) {
-    const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
 
     const filteredColumns = React.useMemo(() => {
-        if (!showCheckbox) {
-            return columns.filter((column) => column.id !== "select")
-        }
-        return columns
+        return showCheckbox ? columns : columns.filter((col) => col.id !== "select")
     }, [columns, showCheckbox])
 
     const table = useReactTable({
         data,
         columns: filteredColumns,
-        filterFns: {
-            includesSome,
-        },
+        filterFns: { includesSome },
+        manualPagination: true,
+        pageCount: Math.ceil(total / pageSize),
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
         state: {
-            sorting,
             columnFilters,
             columnVisibility,
             rowSelection,
+            pagination: {
+                pageIndex,
+                pageSize,
+            },
         },
+        onSortingChange: (newSorting) => {
+            onSortingChange(newSorting)
+        },
+        onPaginationChange: (updater) => {
+            const next = typeof updater === "function" ? updater({ pageIndex, pageSize }) : updater
+            onPageChange(next.pageIndex)
+            onPageSizeChange(next.pageSize)
+        },
+        onColumnFiltersChange: setColumnFilters,
+        onColumnVisibilityChange: setColumnVisibility,
+        onRowSelectionChange: setRowSelection,
         enableRowSelection: showCheckbox,
     })
 
     const isFiltered = table.getState().columnFilters.length > 0
-    const searchColumn = table.getColumn(searchableColumn ?? "")
+
+    const renderPagination = () => (
+        <div className="flex items-center justify-between px-2">
+            <div className="flex-1 text-sm text-muted-foreground">
+                {table.options.enableRowSelection && (
+                    <>
+                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                        {table.getFilteredRowModel().rows.length} row(s) selected.
+                    </>
+                )}
+            </div>
+            <div className="flex items-center space-x-6 lg:space-x-8">
+                <div className="flex items-center space-x-2">
+                    <Select
+                        value={`${pageSize}`}
+                        onValueChange={(value) => onPageSizeChange(Number(value))}
+                    >
+                        <SelectTrigger className="h-8 w-[70px]">
+                            <SelectValue placeholder={pageSize} />
+                        </SelectTrigger>
+                        <SelectContent side="top">
+                            {[10, 20, 30, 40, 50].map((size) => (
+                                <SelectItem key={size} value={`${size}`}>
+                                    {size}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <Button
+                        variant="outline"
+                        className="hidden h-8 w-8 p-0 lg:flex"
+                        onClick={() => onPageChange(0)}
+                        disabled={pageIndex === 0}
+                    >
+                        <ChevronsLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="h-8 w-8 p-0"
+                        onClick={() => onPageChange(pageIndex - 1)}
+                        disabled={pageIndex === 0}
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="h-8 w-8 p-0"
+                        onClick={() => onPageChange(pageIndex + 1)}
+                        disabled={(pageIndex + 1) * pageSize >= total}
+                    >
+                        <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="hidden h-8 w-8 p-0 lg:flex"
+                        onClick={() => onPageChange(Math.ceil(total / pageSize) - 1)}
+                        disabled={(pageIndex + 1) * pageSize >= total}
+                    >
+                        <ChevronsRight className="h-4 w-4" />
+                    </Button>
+                </div>
+            </div>
+        </div>
+    )
+
+    const renderViewOptions = () => (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="ml-auto h-8 lg:flex">
+                    <Settings2 className="mr-2 h-4 w-4" />
+                    View
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[150px]">
+                <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {table
+                    .getAllColumns()
+                    .filter((col) => typeof col.accessorFn !== "undefined" && col.getCanHide())
+                    .map((col) => (
+                        <DropdownMenuCheckboxItem
+                            key={col.id}
+                            className="capitalize"
+                            checked={col.getIsVisible()}
+                            onCheckedChange={(value) => col.toggleVisibility(!!value)}
+                        >
+                            {col.id}
+                        </DropdownMenuCheckboxItem>
+                    ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
 
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <div className="flex flex-1 items-center space-x-2">
-                    {searchColumn && (
-                        <Input
-                            placeholder={`Filter by ${searchableColumn}...`}
-                            value={(searchColumn.getFilterValue() as string) ?? ""}
-                            onChange={(event) =>
-                                searchColumn.setFilterValue(event.target.value)
-                            }
-                            className="h-8 w-[250px]"
-                        />
-                    )}
-
+                    <Input
+                        placeholder="Search..."
+                        value={searchValue}  // Bind search value
+                        onChange={(e) => onSearchChange(e.target.value)}  // Handle search change
+                        className="h-8 w-[250px]"
+                    />
                     {filterableColumns.map((col) => {
                         const column = table.getColumn(col.id)
                         return (
@@ -125,7 +254,6 @@ export function DataTable<TData, TValue>({
                             )
                         )
                     })}
-
                     {isFiltered && (
                         <Button
                             variant="ghost"
@@ -137,7 +265,7 @@ export function DataTable<TData, TValue>({
                         </Button>
                     )}
                 </div>
-                <DataTableViewOptions table={table} />
+                {renderViewOptions()}
             </div>
 
             <div className="rounded-md border">
@@ -167,20 +295,14 @@ export function DataTable<TData, TValue>({
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="h-24 text-center"
-                                >
+                                <TableCell colSpan={columns.length} className="h-24 text-center">
                                     No results.
                                 </TableCell>
                             </TableRow>
@@ -189,7 +311,7 @@ export function DataTable<TData, TValue>({
                 </Table>
             </div>
 
-            <DataTablePagination table={table} />
+            {renderPagination()}
         </div>
     )
 }
