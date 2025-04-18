@@ -3,6 +3,7 @@ import './App.css';
 import Dashboard from './pages/dashboard/Dashboard';
 import Login from "./pages/authentication/Login";
 import Forgot from "./pages/authentication/Forgot";
+import { MainLayout } from "./layouts/MainLayout";
 
 
 
@@ -14,6 +15,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<Forgot />} />
 
+        <Route element={<MainLayout />}>
         {/* Protected Routes */}
         <Route
           path="/"
@@ -23,6 +25,7 @@ function App() {
      
           }
         />
+        </Route>
         
       </Routes>
     </Router>

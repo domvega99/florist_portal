@@ -1,33 +1,28 @@
-"use client"
-
-import type * as React from "react"
 import {
-    ArrowUpCircleIcon,
     BarChartIcon,
-    CameraIcon,
     ClipboardListIcon,
-    DatabaseIcon,
-    FileCodeIcon,
-    FileIcon,
-    FileTextIcon,
-    FolderIcon,
     HelpCircleIcon,
     LayoutDashboardIcon,
     ListIcon,
+    MessageCircle,
+    Package,
     SearchIcon,
     SettingsIcon,
-    UsersIcon,
+    Store,
+    User
 } from "lucide-react"
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar"
-import { NavMain } from "./nav.main"
+import type * as React from "react"
+import { Link } from "react-router-dom"
 import { NavDocuments } from "./nav-documents"
 import { NavSecondary } from "./nav-secondary"
 import { NavUser } from "./nav-user"
+import { NavMain } from "./nav.main"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar"
 
 const data = {
     user: {
-        name: "shadcn",
-        email: "m@example.com",
+        name: "Dominic Vega",
+        email: "dominic@example.com",
         avatar: "/avatars/shadcn.jpg",
     },
     navMain: [
@@ -37,72 +32,14 @@ const data = {
             icon: LayoutDashboardIcon,
         },
         {
-            title: "Lifecycle",
+            title: "Florists",
             url: "#",
-            icon: ListIcon,
+            icon: Store,
         },
         {
-            title: "Analytics",
+            title: "Responses",
             url: "#",
-            icon: BarChartIcon,
-        },
-        {
-            title: "Projects",
-            url: "#",
-            icon: FolderIcon,
-        },
-        {
-            title: "Team",
-            url: "#",
-            icon: UsersIcon,
-        },
-    ],
-    navClouds: [
-        {
-            title: "Capture",
-            icon: CameraIcon,
-            isActive: true,
-            url: "#",
-            items: [
-                {
-                    title: "Active Proposals",
-                    url: "#",
-                },
-                {
-                    title: "Archived",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Proposal",
-            icon: FileTextIcon,
-            url: "#",
-            items: [
-                {
-                    title: "Active Proposals",
-                    url: "#",
-                },
-                {
-                    title: "Archived",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Prompts",
-            icon: FileCodeIcon,
-            url: "#",
-            items: [
-                {
-                    title: "Active Proposals",
-                    url: "#",
-                },
-                {
-                    title: "Archived",
-                    url: "#",
-                },
-            ],
+            icon: MessageCircle,
         },
     ],
     navSecondary: [
@@ -122,21 +59,21 @@ const data = {
             icon: SearchIcon,
         },
     ],
-    documents: [
+    managements: [
         {
-            name: "Data Library",
+            name: "Users",
             url: "#",
-            icon: DatabaseIcon,
+            icon: User,
+        },
+        {
+            name: "Roles & Permissions",
+            url: "#",
+            icon: Package,
         },
         {
             name: "Reports",
             url: "#",
             icon: ClipboardListIcon,
-        },
-        {
-            name: "Word Assistant",
-            url: "#",
-            icon: FileIcon,
         },
     ],
 }
@@ -148,17 +85,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-                            <a href="#">
-                                <ArrowUpCircleIcon className="h-5 w-5" />
-                                <span className="text-base font-semibold">Acme Inc.</span>
-                            </a>
+                            <Link to="/">
+                                <span className="text-base font-semibold">🌸 Florist Management</span>
+                            </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain} />
-                <NavDocuments items={data.documents} />
+                <NavDocuments items={data.managements} />
                 <NavSecondary items={data.navSecondary} className="mt-auto" />
             </SidebarContent>
             <SidebarFooter>
