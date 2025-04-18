@@ -1,9 +1,7 @@
 import {
-    BarChartIcon,
     ClipboardListIcon,
     HelpCircleIcon,
     LayoutDashboardIcon,
-    ListIcon,
     MessageCircle,
     Package,
     SearchIcon,
@@ -28,12 +26,12 @@ const data = {
     navMain: [
         {
             title: "Dashboard",
-            url: "#",
+            url: "/",
             icon: LayoutDashboardIcon,
         },
         {
             title: "Florists",
-            url: "#",
+            url: "/florists",
             icon: Store,
         },
         {
