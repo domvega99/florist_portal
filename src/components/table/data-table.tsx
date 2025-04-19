@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -8,26 +10,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
     type ColumnDef,
     type ColumnFiltersState,
-    FilterFn,
-    OnChangeFn,
+    type FilterFn,
+    type OnChangeFn,
     type SortingState,
     type VisibilityState,
     flexRender,
@@ -36,16 +25,9 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import {
-    ChevronLeft,
-    ChevronRight,
-    ChevronsLeft,
-    ChevronsRight,
-    Settings2,
-    X,
-} from "lucide-react"
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Settings2, X } from "lucide-react"
 import * as React from "react"
-import { DataTableFacetedFilter } from "../../components/table/data-table-faceted-filter"
+import { DataTableFacetedFilter } from "@/components/table/data-table-faceted-filter"
 
 export interface FacetedFilterOption {
     label: string
@@ -71,8 +53,10 @@ interface DataTableProps<TData, TValue> {
     filterableColumns?: FilterableColumn[]
     sorting: SortingState
     onSortingChange: OnChangeFn<SortingState>
-    searchValue: string  // Search value prop
-    onSearchChange: (searchValue: string) => void  // Function to handle search changes
+    searchValue: string // Search value prop
+    onSearchChange: (searchValue: string) => void // Function to handle search changes
+    onFilterChange?: (columnId: string, value: string | undefined) => void // Added for filter changes
+    onResetFilters?: () => void // Added for resetting all filters at once
 }
 
 const includesSome: FilterFn<unknown> = (row, columnId, filterValue: string[]) => {
@@ -94,6 +78,8 @@ export function DataTable<TData, TValue>({
     onSortingChange,
     searchValue,
     onSearchChange,
+    onFilterChange,
+    onResetFilters,
 }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -120,6 +106,7 @@ export function DataTable<TData, TValue>({
                 pageIndex,
                 pageSize,
             },
+            sorting,
         },
         onSortingChange: (newSorting) => {
             onSortingChange(newSorting)
@@ -137,22 +124,36 @@ export function DataTable<TData, TValue>({
 
     const isFiltered = table.getState().columnFilters.length > 0
 
+    // Handle resetting all filters
+    const handleResetFilters = () => {
+        // Reset the table's column filters
+        table.resetColumnFilters()
+
+        // If we have a custom reset handler, call it
+        if (onResetFilters) {
+            onResetFilters()
+        }
+        // Otherwise, manually reset each filter by calling onFilterChange with undefined
+        else if (onFilterChange) {
+            filterableColumns.forEach((col) => {
+                onFilterChange(col.id, undefined)
+            })
+        }
+    }
+
     const renderPagination = () => (
         <div className="flex items-center justify-between px-2">
             <div className="flex-1 text-sm text-muted-foreground">
                 {table.options.enableRowSelection && (
                     <>
-                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                        {table.getFilteredRowModel().rows.length} row(s) selected.
+                        {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s)
+                        selected.
                     </>
                 )}
             </div>
             <div className="flex items-center space-x-6 lg:space-x-8">
                 <div className="flex items-center space-x-2">
-                    <Select
-                        value={`${pageSize}`}
-                        onValueChange={(value) => onPageSizeChange(Number(value))}
-                    >
+                    <Select value={`${pageSize}`} onValueChange={(value) => onPageSizeChange(Number(value))}>
                         <SelectTrigger className="h-8 w-[70px]">
                             <SelectValue placeholder={pageSize} />
                         </SelectTrigger>
@@ -237,8 +238,8 @@ export function DataTable<TData, TValue>({
                 <div className="flex flex-1 items-center space-x-2">
                     <Input
                         placeholder="Search..."
-                        value={searchValue}  // Bind search value
-                        onChange={(e) => onSearchChange(e.target.value)}  // Handle search change
+                        value={searchValue} // Bind search value
+                        onChange={(e) => onSearchChange(e.target.value)} // Handle search change
                         className="h-8 w-[250px]"
                     />
                     {filterableColumns.map((col) => {
@@ -250,16 +251,13 @@ export function DataTable<TData, TValue>({
                                     column={column}
                                     title={col.title}
                                     options={col.options}
+                                    onFilterChange={(value) => onFilterChange?.(col.id, value)}
                                 />
                             )
                         )
                     })}
                     {isFiltered && (
-                        <Button
-                            variant="ghost"
-                            onClick={() => table.resetColumnFilters()}
-                            className="h-8 px-2 lg:px-3"
-                        >
+                        <Button variant="ghost" onClick={handleResetFilters} className="h-8 px-2 lg:px-3">
                             Reset
                             <X className="ml-2 h-4 w-4" />
                         </Button>
@@ -275,12 +273,7 @@ export function DataTable<TData, TValue>({
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
                                     <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
+                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -289,14 +282,9 @@ export function DataTable<TData, TValue>({
                     <TableBody>
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
-                                >
+                                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
+                                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                                     ))}
                                 </TableRow>
                             ))

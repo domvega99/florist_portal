@@ -1,3 +1,5 @@
+"use client"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -24,17 +26,38 @@ interface DataTableFacetedFilterProps<TData, TValue> {
         value: string
         icon?: React.ComponentType<{ className?: string }>
     }[]
+    onFilterChange?: (value: string | undefined) => void
 }
 
 export function DataTableFacetedFilter<TData, TValue>({
     column,
     title,
     options,
+    onFilterChange,
 }: DataTableFacetedFilterProps<TData, TValue>) {
     const facets = column?.getFacetedUniqueValues()
     const selectedValue = column?.getFilterValue() as string | undefined
 
     const selectedOption = options.find((option) => option.value === selectedValue)
+
+    const handleSelect = (value: string) => {
+        const newValue = selectedValue === value ? undefined : value
+        column?.setFilterValue(newValue)
+
+        // Call the onFilterChange callback
+        if (onFilterChange) {
+            onFilterChange(newValue)
+        }
+    }
+
+    const handleClear = () => {
+        column?.setFilterValue(undefined)
+
+        // Call the onFilterChange callback with undefined
+        if (onFilterChange) {
+            onFilterChange(undefined)
+        }
+    }
 
     return (
         <Popover>
@@ -61,13 +84,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                             {options.map((option) => {
                                 const isSelected = selectedValue === option.value
                                 return (
-                                    <CommandItem
-                                        key={option.value}
-                                        onSelect={() => {
-                                            const newValue = isSelected ? undefined : option.value
-                                            column?.setFilterValue(newValue)
-                                        }}
-                                    >
+                                    <CommandItem key={option.value} onSelect={() => handleSelect(option.value)}>
                                         <div
                                             className={cn(
                                                 "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
@@ -91,10 +108,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                             <>
                                 <CommandSeparator />
                                 <CommandGroup>
-                                    <CommandItem
-                                        onSelect={() => column?.setFilterValue(undefined)}
-                                        className="justify-center text-center"
-                                    >
+                                    <CommandItem onSelect={handleClear} className="justify-center text-center">
                                         Clear filter
                                     </CommandItem>
                                 </CommandGroup>
@@ -106,6 +120,8 @@ export function DataTableFacetedFilter<TData, TValue>({
         </Popover>
     )
 }
+
+
 
 
 // import { Badge } from "@/components/ui/badge"

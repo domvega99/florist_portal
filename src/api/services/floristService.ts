@@ -1,6 +1,6 @@
 import { Florist } from "@/shared/interfaces/florist.interface";
-import { GET } from "../restRequest";
 import { PaginatedResponse } from "@/shared/interfaces/list.interface";
+import { GET } from "../restRequest";
 
 interface FloristParams {
     page?: number;
@@ -9,6 +9,9 @@ interface FloristParams {
     order?: "asc" | "desc";
     search?: string;
     city?: string;
+    province?: string;
+    status?: string;
+    florist_rep?: string;
 }
 
 export const fetchFlorists = (
@@ -22,6 +25,9 @@ export const fetchFlorists = (
     if (params.order) query.append("order", params.order);
     if (params.search) query.append("search", params.search);
     if (params.city) query.append("city", params.city);
+    if (params.province) query.append("province", params.province);
+    if (params.status) query.append("status", params.status);
+    if (params.florist_rep) query.append("florist_rep", params.florist_rep);
     
     return GET<PaginatedResponse<Florist>>(`/florists?${query.toString()}`).then(
         (res) => {
