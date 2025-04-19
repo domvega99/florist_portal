@@ -124,16 +124,12 @@ export function DataTable<TData, TValue>({
 
     const isFiltered = table.getState().columnFilters.length > 0
 
-    // Handle resetting all filters
     const handleResetFilters = () => {
-        // Reset the table's column filters
         table.resetColumnFilters()
 
-        // If we have a custom reset handler, call it
         if (onResetFilters) {
             onResetFilters()
         }
-        // Otherwise, manually reset each filter by calling onFilterChange with undefined
         else if (onFilterChange) {
             filterableColumns.forEach((col) => {
                 onFilterChange(col.id, undefined)
@@ -309,7 +305,7 @@ export function DataTable<TData, TValue>({
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
+                                    {/* No results. */}
                                 </TableCell>
                             </TableRow>
                         )}

@@ -18,7 +18,7 @@ const FloristList = () => {
     const [data, setData] = useState<Florist[]>([])
     const [total, setTotal] = useState<number>(0)
     const [pageIndex, setPageIndex] = useState<number>(0)
-    const [pageSize, setPageSize] = useState<number>(10)
+    const [pageSize, setPageSize] = useState<number>(20)
     const [sorting, setSorting] = useState<SortingState>([])
     const [searchValue, setSearchValue] = useState<string>("")
     const [filterValues, setFilterValues] = useState<{

@@ -4,6 +4,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Florist } from "@/shared/interfaces/florist.interface"
 import type { ColumnDef } from "@tanstack/react-table"
 import { UserRowActions } from "./row-actions"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { API_CONFIG } from "@/api/apiConfig"
 
 export const floristColumn: ColumnDef<Florist>[] = [
     {
@@ -26,14 +28,22 @@ export const floristColumn: ColumnDef<Florist>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "floristcode",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Code" />,
-        enableHiding: false,
+        accessorKey: "photo",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Logo" />,
+        enableSorting: false,
+        cell: ({ row }) => {
+            const photo = row.getValue("photo"); 
+            return (
+                <Avatar>
+                    <AvatarImage src={API_CONFIG.IMAGE_BASE_URL + `/` + photo} alt="@shadcn" />
+                    <AvatarFallback>🌸</AvatarFallback>
+                </Avatar>
+            );
+        },
     },
     {
-        accessorKey: "photo_url",
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Image" />,
-        enableSorting: false,
+        accessorKey: "floristcode",
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Code" />,
     },
     {
         accessorKey: "florist_name",
