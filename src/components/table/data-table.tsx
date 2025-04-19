@@ -141,6 +141,13 @@ export function DataTable<TData, TValue>({
         }
     }
 
+    const formatColumnLabel = (id: string): string => {
+        return id
+            .split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    }
+
     const renderPagination = () => (
         <div className="flex items-center justify-between px-2">
             <div className="flex-1 text-sm text-muted-foreground">
@@ -232,7 +239,7 @@ export function DataTable<TData, TValue>({
                             checked={col.getIsVisible()}
                             onCheckedChange={(value) => col.toggleVisibility(!!value)}
                         >
-                            {col.id}
+                            {formatColumnLabel(col.id)}
                         </DropdownMenuCheckboxItem>
                     ))}
             </DropdownMenuContent>
@@ -242,35 +249,39 @@ export function DataTable<TData, TValue>({
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
-                <div className="flex flex-1 items-center space-x-2">
-                    <Input
-                        placeholder="Search..."
-                        value={searchValue} // Bind search value
-                        onChange={(e) => onSearchChange(e.target.value)} // Handle search change
-                        className="h-8 w-[250px]"
-                    />
-                    {filterableColumns.map((col) => {
-                        const column = table.getColumn(col.id)
-                        return (
-                            column && (
-                                <DataTableFacetedFilter
-                                    key={col.id}
-                                    column={column}
-                                    title={col.title}
-                                    options={col.options}
-                                    onFilterChange={(value) => onFilterChange?.(col.id, value)}
-                                />
+                <div className="flex flex-wrap items-center space-x-2 space-y-2 md:space-y-0">
+                    <div className="flex space-x-2">
+                        <Input
+                            placeholder="Search"
+                            value={searchValue} 
+                            onChange={(e) => onSearchChange(e.target.value)} 
+                            className="h-8 md:w-[250px]"
+                        />
+                        {renderViewOptions()}
+                    </div>
+                    <div className="flex flex-wrap items-center space-x-2 space-y-2 md:space-y-0">
+                        {filterableColumns.map((col) => {
+                            const column = table.getColumn(col.id)
+                            return (
+                                column && (
+                                    <DataTableFacetedFilter
+                                        key={col.id}
+                                        column={column}
+                                        title={col.title}
+                                        options={col.options}
+                                        onFilterChange={(value) => onFilterChange?.(col.id, value)}
+                                    />
+                                )
                             )
-                        )
-                    })}
-                    {isFiltered && (
-                        <Button variant="ghost" onClick={handleResetFilters} className="h-8 px-2 lg:px-3">
-                            Reset
-                            <X className="ml-2 h-4 w-4" />
-                        </Button>
-                    )}
+                        })}
+                        {isFiltered && (
+                            <Button variant="ghost" onClick={handleResetFilters} className="h-8 px-2 lg:px-3">
+                                Reset
+                                <X className="ml-2 h-4 w-4" />
+                            </Button>
+                        )}
+                    </div>
                 </div>
-                {renderViewOptions()}
             </div>
 
             <div className="rounded-md border">
