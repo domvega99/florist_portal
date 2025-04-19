@@ -152,6 +152,9 @@ export function DataTable<TData, TValue>({
                 )}
             </div>
             <div className="flex items-center space-x-6 lg:space-x-8">
+                <div className="flex items-center justify-center text-sm font-medium">
+                    Items per page
+                </div>
                 <div className="flex items-center space-x-2">
                     <Select value={`${pageSize}`} onValueChange={(value) => onPageSizeChange(Number(value))}>
                         <SelectTrigger className="h-8 w-[70px]">
@@ -165,6 +168,9 @@ export function DataTable<TData, TValue>({
                             ))}
                         </SelectContent>
                     </Select>
+                </div>
+                <div className="flex items-center justify-center text-sm font-medium">
+                    Showing {table.getState().pagination.pageIndex + 1} to {table.getPageCount()} of {total} results
                 </div>
                 <div className="flex items-center space-x-2">
                     <Button
@@ -183,6 +189,7 @@ export function DataTable<TData, TValue>({
                     >
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
+                    
                     <Button
                         variant="outline"
                         className="h-8 w-8 p-0"

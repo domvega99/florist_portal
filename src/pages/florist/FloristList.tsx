@@ -1,5 +1,3 @@
-"use client"
-
 import {
     fetchFilterCities,
     fetchFilterProvinces,
@@ -10,8 +8,8 @@ import {
 import { DataTable } from "@/components/table/data-table"
 import { Button } from "@/components/ui/button"
 import { useDebounce } from "@/hooks/useDebounce"
-import type { Florist } from "@/shared/interfaces/florist.interface"
-import type { SortingState } from "@tanstack/react-table"
+import { Florist } from "@/shared/interfaces/florist.interface"
+import { SortingState } from "@tanstack/react-table"
 import { useEffect, useState } from "react"
 import { floristColumn } from "./utils/column"
 import { floristFilters } from "./utils/filter"
@@ -23,15 +21,13 @@ const FloristList = () => {
     const [pageSize, setPageSize] = useState<number>(10)
     const [sorting, setSorting] = useState<SortingState>([])
     const [searchValue, setSearchValue] = useState<string>("")
-    const debouncedSearchValue = useDebounce(searchValue, 300)
-
-    // Add state for filter values
     const [filterValues, setFilterValues] = useState<{
         city?: string
         province?: string
         status?: string
         florist_rep?: string
     }>({})
+    const debouncedSearchValue = useDebounce(searchValue, 300)
 
     const [cityOptions, setCityOptions] = useState<{ label: string; value: string }[]>([])
     const [provinceOptions, setProvinceOptions] = useState<{ label: string; value: string }[]>([])
@@ -45,17 +41,15 @@ const FloristList = () => {
 
             try {
                 const res = await fetchFlorists({
-                    page: pageIndex + 1, // API usually expects 1-based indexing
+                    page: pageIndex, 
                     per_page: pageSize,
                     sort: sortField,
                     order: sorting.length > 0 ? order : undefined,
                     search: debouncedSearchValue,
-                    // Include filter values in the API call
                     city: filterValues.city,
-                    // You can add other filters here as needed
-                    // province: filterValues.province,
-                    // status: filterValues.status,
-                    // florist_rep: filterValues.florist_rep
+                    province: filterValues.province,
+                    status: filterValues.status,
+                    florist_rep: filterValues.florist_rep
                 })
                 setData(res.data)
                 setTotal(res.total ?? res.data.length)
@@ -65,7 +59,7 @@ const FloristList = () => {
         }
 
         fetchData()
-    }, [pageIndex, pageSize, sorting, debouncedSearchValue, filterValues]) // Add filterValues to dependency array
+    }, [pageIndex, pageSize, sorting, debouncedSearchValue, filterValues]) 
 
     useEffect(() => {
         const fetchFilters = async () => {
@@ -109,18 +103,14 @@ const FloristList = () => {
         fetchFilters()
     }, [])
 
-    // Handle filter changes
     const handleFilterChange = (columnId: string, value: string | undefined) => {
         setFilterValues((prev) => ({
             ...prev,
             [columnId]: value,
         }))
-
-        // Reset to first page when filters change
         setPageIndex(0)
     }
 
-    // Handle resetting all filters
     const handleResetFilters = () => {
         setFilterValues({})
         setPageIndex(0)
@@ -180,7 +170,7 @@ const FloristList = () => {
                 searchValue={searchValue}
                 onSearchChange={setSearchValue}
                 onFilterChange={handleFilterChange}
-                onResetFilters={handleResetFilters} // Add this prop
+                onResetFilters={handleResetFilters} 
             />
         </div>
     )
