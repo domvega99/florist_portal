@@ -9,6 +9,7 @@ import { ArrowLeft, Save } from "lucide-react"
 import { Link } from "react-router-dom"
 import FloristDetails from "./FloristDetails"
 import FloristInfo from "./FloristInfo"
+import FloristProducts from "./FloristProducts"
 
 const FloristAdd = () => {
     return (
@@ -22,13 +23,17 @@ const FloristAdd = () => {
                 </Link>
                 <Button><Save /> Save</Button>
             </div>
-            <Tabs defaultValue="details">
-                <TabsList className="grid grid-cols-2 w-full md:w-[400px]">
-                    <TabsTrigger value="details">Basic</TabsTrigger>
+            <Tabs defaultValue="detail">
+                <TabsList className="grid grid-cols-3 w-full md:w-[600px]">
+                    <TabsTrigger value="detail">Basic</TabsTrigger>
+                    <TabsTrigger value="product">Products</TabsTrigger>
                     <TabsTrigger value="info">Marketing Info</TabsTrigger>
                 </TabsList>
-                <TabsContent value="details">
+                <TabsContent value="detail">
                     <FloristDetails />
+                </TabsContent>
+                <TabsContent value="product">
+                    <FloristProducts />
                 </TabsContent>
                 <TabsContent value="info">
                     <FloristInfo />

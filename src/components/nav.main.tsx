@@ -20,6 +20,7 @@ export function NavMain({
     }[]
 }) {
     const location = useLocation()
+    const path = `/`+location.pathname.split('/')[1]
 
     return (
         <SidebarGroup>
@@ -27,7 +28,7 @@ export function NavMain({
                 <SidebarGroupLabel>Menu</SidebarGroupLabel>
                 <SidebarMenu>
                     {items.map((item) => {
-                        const isActive = location.pathname === item.url
+                        const isActive = path === item.url
                         return (
                             <SidebarMenuItem key={item.title}>
                                 <Link to={item.url} className="w-full">
