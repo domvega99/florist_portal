@@ -1,5 +1,4 @@
-"use client"
-
+import { DataTableFacetedFilter } from "@/components/table/data-table-faceted-filter"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -27,7 +26,6 @@ import {
 } from "@tanstack/react-table"
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Settings2, X } from "lucide-react"
 import * as React from "react"
-import { DataTableFacetedFilter } from "@/components/table/data-table-faceted-filter"
 
 export interface FacetedFilterOption {
     label: string
@@ -106,7 +104,6 @@ export function DataTable<TData, TValue>({
                 pageIndex,
                 pageSize,
             },
-            sorting,
         },
         onSortingChange: (newSorting) => {
             onSortingChange(newSorting)
@@ -155,7 +152,7 @@ export function DataTable<TData, TValue>({
                 )}
             </div>
             <div className="flex items-center space-x-6 lg:space-x-8">
-                <div className="flex items-center justify-center text-sm font-medium">
+                <div className="hidden md:flex items-center justify-center text-sm font-medium">
                     Items per page
                 </div>
                 <div className="flex items-center space-x-2">
@@ -172,13 +169,13 @@ export function DataTable<TData, TValue>({
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="flex items-center justify-center text-sm font-medium">
+                <div className="hidden md:flex items-center justify-center text-sm font-medium">
                     Showing {table.getState().pagination.pageIndex + 1} to {table.getPageCount()} of {total} results
                 </div>
                 <div className="flex items-center space-x-2">
                     <Button
                         variant="outline"
-                        className="hidden h-8 w-8 p-0 lg:flex"
+                        className="h-8 w-8 p-0"
                         onClick={() => onPageChange(0)}
                         disabled={pageIndex === 0}
                     >
@@ -203,7 +200,7 @@ export function DataTable<TData, TValue>({
                     </Button>
                     <Button
                         variant="outline"
-                        className="hidden h-8 w-8 p-0 lg:flex"
+                        className="h-8 w-8 p-0"
                         onClick={() => onPageChange(Math.ceil(total / pageSize) - 1)}
                         disabled={(pageIndex + 1) * pageSize >= total}
                     >
@@ -280,7 +277,7 @@ export function DataTable<TData, TValue>({
                 </div>
             </div>
 
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-auto max-h-[600px]">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (

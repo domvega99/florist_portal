@@ -151,7 +151,7 @@ const FloristList = () => {
     return (
         <div className="p-5">
             <div className="flex items-center justify-between mb-4">
-                <h1 className="text-2xl font-bold tracking-tight">Florist Management</h1>
+                <h1 className="text-2xl font-bold tracking-tight">Florists</h1>
                 <Button>Create Florist</Button>
             </div>
 
