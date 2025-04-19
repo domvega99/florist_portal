@@ -6,6 +6,7 @@ import Forgot from "./pages/authentication/Forgot";
 import { MainLayout } from "./layouts/MainLayout";
 import FloristList from "./pages/florist/FloristList";
 import UserList from "./pages/user/UserList";
+import FloristAdd from "./pages/florist/FloristAdd";
 
 
 
@@ -23,12 +24,13 @@ function App() {
               <Dashboard />
             }
           />
-          <Route
-            path="/florists"
-            element={
-              <FloristList />
-            }
-          />
+          {/* Florist Page */}
+          <Route path="/florists">
+            <Route index element={<FloristList />} />
+            <Route path="create" element={<FloristAdd />} />
+            <Route path="edit/:id" element={<FloristAdd />} />
+          </Route>
+
           <Route
             path="/users"
             element={

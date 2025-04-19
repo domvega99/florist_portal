@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import type { Row } from "@tanstack/react-table"
 import { MoreHorizontal, Pen, Trash } from "lucide-react"
+import { Link } from "react-router-dom"
 
 interface UserRowActionsProps<TData> {
     row: Row<TData>
@@ -22,10 +23,12 @@ export function UserRowActions<TData>({ row }: UserRowActionsProps<TData>) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                    <Pen className="mr-2 h-4 w-4" />
-                    Edit
-                </DropdownMenuItem>
+                <Link to={`/florists/edit/${row.id}`}>
+                    <DropdownMenuItem>
+                        <Pen className="mr-2 h-4 w-4" />
+                        Edit
+                    </DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem>
                     <Trash className="mr-2 h-4 w-4" />
                     Delete

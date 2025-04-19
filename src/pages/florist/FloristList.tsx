@@ -13,6 +13,8 @@ import { SortingState } from "@tanstack/react-table"
 import { useEffect, useState } from "react"
 import { floristColumn } from "./utils/column"
 import { floristFilters } from "./utils/filter"
+import { Link } from "react-router-dom"
+import { Plus } from "lucide-react"
 
 const FloristList = () => {
     const [data, setData] = useState<Florist[]>([])
@@ -152,7 +154,12 @@ const FloristList = () => {
         <div className="p-5">
             <div className="flex items-center justify-between mb-4">
                 <h1 className="text-2xl font-bold tracking-tight">Florists</h1>
-                <Button>Create Florist</Button>
+                <Link to="/florists/create">
+                    <Button> 
+                        <Plus/> 
+                        Add New Florist
+                    </Button>
+                </Link>
             </div>
 
             <DataTable
